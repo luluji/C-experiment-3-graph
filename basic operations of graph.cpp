@@ -185,6 +185,8 @@ void print_ALG(ALGraph *G)
 void DFS_MG1(MGraph *g,int no)
 {
 	int i,v;
+	for(i=0;i<g->n;i++)
+		visited1[i]=0;
 	printf("%d",no);
 	v=getindexofvex(no,g);
 	visited1[v]=1;
@@ -199,6 +201,8 @@ void DFS_MG1(MGraph *g,int no)
 void DFS_MG2(MGraph *g,int v)
 {
 	int i;
+	for(i=0;i<g->n;i++)
+		visited1[i]=0;
 	printf("%d",v);
 	visited1[v]=1;
 	for(i=0;i<g->n;i++)
@@ -226,6 +230,8 @@ void A_DFS_MG(MGraph *g)
 {
 	int i;
 	for(i=0;i<g->n;i++)
+		visited1[i]=0;
+	for(i=0;i<g->n;i++)
 		if(visited1[i]==0)DFS_MG2(g,i);
 	printf("\n");
 }
@@ -234,36 +240,70 @@ void A_DFS_ALG(ALGraph *G)
 {
 	int i;
 	for(i=0;i<G->n;i++)
+		visited2[i]=0;
+	for(i=0;i<G->n;i++)
 		if(visited2[i]==0) DFS_ALG(G,i);
 	printf("\n");
 }
+
+void BFS(ALGraph *G,int v)
+{
+	int queue[MAXV];
+	ArcNode *p;
+	int i,t,rear=0,front=0;
+	for(i=0;i<G->n;i++)
+		visited2[i]=0;
+	printf("%d",v);
+	visited2[v]=1;
+	rear++;
+	queue[rear]=v;
+	while(front!=rear)
+	{	
+		front=(front+1)%MAXV;
+		t=queue[front];	
+		p=G->adjlist[t].firstarc;
+		while(p!=NULL)
+		{		
+			if(visited2[p->adjvex]==0)
+			{
+				printf("%d",p->adjvex);
+				visited2[p->adjvex]=1;
+				rear=(rear+1)%MAXV;
+				queue[rear]=p->adjvex;	
+			}
+			p=p->nextarc;
+		}
+		
+	}
+	printf("\n");
+ } 
 
 int main(void)
 {
 	int i,t;
 	MGraph p,*g;
+	ALGraph q,*G;
 	g=&p;
+	G=&q;
 //	MGraph *g=(MGraph *)malloc(sizeof(MGraph));
-	ALGraph *G=(ALGraph *)malloc(sizeof(ALGraph));
+//	ALGraph *G=(ALGraph *)malloc(sizeof(ALGraph));
 	CreaMGraph(g);
 	print_MG(g);
-	printf("Input the vertex and start to traverse:");
+	printf("Input the vertex and start to DFS:");
 	scanf("%d",&t);
 	DFS_MG2(g,t);
-	printf("\n");
-	for(i=0;i<g->n;i++)
-		visited1[i]=0;
+	printf("\n");	
 	A_DFS_MG(g);
 
 	CreaALGraph(G);
 	print_ALG(G);
-	printf("Input the vertex start to traverse:");
+	printf("Input the vertex start to DFS:");
 	scanf("%d",&t);
 	DFS_ALG(G,t);
 	printf("\n");
-	for(i=0;i<G->n;i++)
-		visited2[i]=0;
 	A_DFS_ALG(G);
+	printf("Input the vertex start to BFS:");
+	BFS(G,t);
 	return 0;
  }
 
