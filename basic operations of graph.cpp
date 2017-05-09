@@ -6,6 +6,8 @@
 
 int visited1[MAXV];
 int visited2[MAXV];
+int d=-1;				//FindPath_ALG   length of path; for output path
+int path[MAXV];	
 
 typedef struct
 {
@@ -225,6 +227,41 @@ void DFS_ALG(ALGraph *G,int v)
 		p=p->nextarc;
 	}
 }
+/*directed graph:
+adjacency list:
+0--1-3
+1--2-3
+2--3-4
+3--
+4--0-3
+path 0 to 4: 0124
+DFS:01234
+reason:when u=2,d=2, next:FindaPath(G,3,4,path,2), d=3.path[3]=3, return nothing;
+	   then FindaPath(G,4,4,path,2), d=3,path[3]=4, oue to u==v, return, over.	  
+*/
+void FindaPath_ALG(ALGraph *G,int u,int v,int path[],int d)	//path u to v
+{
+	int i;
+	ArcNode *p;
+	visited2[u]=1;
+	d++;
+	path[d]=u;
+	if(u==v)
+	{
+		printf("path is:");
+		for(i=0;i<=d;i++)
+			printf("%d",path[i]);
+		printf("\n");
+		return;
+	}
+	p=G->adjlist[u].firstarc;
+	while(p!=NULL)
+	{
+		if(visited2[p->adjvex]==0)
+			FindaPath_ALG(G,p->adjvex,v,path,d);
+		p=p->nextarc;
+	}
+}
 
 void A_DFS_MG(MGraph *g)
 {
@@ -280,30 +317,34 @@ void BFS(ALGraph *G,int v)
 
 int main(void)
 {
-	int i,t;
+	int i,t,u,v;
 	MGraph p,*g;
 	ALGraph q,*G;
 	g=&p;
 	G=&q;
 //	MGraph *g=(MGraph *)malloc(sizeof(MGraph));
 //	ALGraph *G=(ALGraph *)malloc(sizeof(ALGraph));
-	CreaMGraph(g);
-	print_MG(g);
-	printf("Input the vertex and start to DFS:");
-	scanf("%d",&t);
-	DFS_MG2(g,t);
-	printf("\n");	
-	A_DFS_MG(g);
+//	CreaMGraph(g);
+//	print_MG(g);
+//	printf("Input the vertex and start to DFS:");
+//	scanf("%d",&t);
+//	DFS_MG2(g,t);
+//	printf("\n");	
+//	A_DFS_MG(g);
 
 	CreaALGraph(G);
 	print_ALG(G);
-	printf("Input the vertex start to DFS:");
-	scanf("%d",&t);
-	DFS_ALG(G,t);
-	printf("\n");
-	A_DFS_ALG(G);
-	printf("Input the vertex start to BFS:");
-	BFS(G,t);
+	printf("Input u v:");
+	scanf("%d %d",&u,&v);
+	printf("\n"); 
+	FindaPath_ALG(G,u,v,path,d);
+//	printf("Input the vertex start to DFS:");
+//	scanf("%d",&t);
+//	DFS_ALG(G,t);
+//	printf("\n");
+//	A_DFS_ALG(G);
+//	printf("Input the vertex start to BFS:");
+//	BFS(G,t);
 	return 0;
  }
 
